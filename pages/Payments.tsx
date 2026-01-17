@@ -1,45 +1,25 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useAlert } from '../context/AlertContext';
 import { useNotification } from '../context/NotificationContext';
-import { getPayments, Payment, deletePayment, updatePaymentStatus } from '../services/paymentService'; // Import actions
 import { exportToCSV } from '../utils/exportUtils';
+import { usePayments } from '../hooks/usePayments';
 
 const Payments: React.FC = () => {
   const { userProfile } = useAuth();
   const { showAlert } = useAlert();
   const { showNotification } = useNotification();
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { payments, isLoading: loading, updatePaymentStatus, deletePayment } = usePayments();
+
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [methodFilter, setMethodFilter] = useState('All');
 
-  useEffect(() => {
-    if (userProfile?.uid) {
-      fetchPayments();
-    } else {
-      setLoading(false);
-    }
-  }, [userProfile]);
 
-  const fetchPayments = async () => {
-    if (!userProfile?.uid) return;
-    try {
-      setLoading(true);
-      const data = await getPayments(userProfile.uid);
-      setPayments(data);
-    } catch (error) {
-      console.error("Error fetching payments:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async (id: string) => {
     if (!userProfile?.uid || !window.confirm("Are you sure you want to delete this payment record?")) return;
     try {
-      await deletePayment(userProfile.uid, id);
-      setPayments(prev => prev.filter(p => p.id !== id));
+      await deletePayment(id);
       showNotification('Payment record deleted', 'success');
     } catch (error) {
       console.error("Error deleting payment:", error);
@@ -48,13 +28,9 @@ const Payments: React.FC = () => {
   };
 
   const handleMarkAsVerified = async (paymentId: string) => {
-    if (!userProfile?.uid) return;
     try {
       setActionLoading(paymentId);
-      await updatePaymentStatus(userProfile.uid, paymentId, 'Verified');
-      setPayments(prev => prev.map(p =>
-        p.id === paymentId ? { ...p, status: 'Verified' } : p
-      ));
+      await updatePaymentStatus({ id: paymentId, status: 'Verified' });
       showNotification('Payment verified successfully', 'success');
     } catch (error) {
       console.error("Error verifying payment:", error);
@@ -112,9 +88,7 @@ const Payments: React.FC = () => {
           <p className="text-gray-500 text-sm sm:base mt-1">Track every pesewa that enters your business.</p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <button onClick={() => fetchPayments()} className="flex-1 sm:flex-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 h-10 px-4 rounded-xl flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm" title="Refresh">
-            <span className="material-symbols-outlined text-lg mr-2">refresh</span> Sync
-          </button>
+          {/* Sync button removed as data is auto-synced */}
           <button onClick={handleExport} className="flex-1 sm:flex-none bg-primary text-white h-10 px-4 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
             <span className="material-symbols-outlined text-lg">download</span> Export
           </button>

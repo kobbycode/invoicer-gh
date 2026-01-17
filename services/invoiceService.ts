@@ -49,6 +49,14 @@ export const updateInvoiceStatus = async (userId: string, invoiceId: string, sta
     });
 };
 
+export const updateInvoice = async (userId: string, invoiceId: string, invoiceData: Partial<Invoice>) => {
+    const invoiceRef = doc(db, 'users', userId, 'invoices', invoiceId);
+    await updateDoc(invoiceRef, {
+        ...invoiceData,
+        updatedAt: Date.now(),
+    });
+};
+
 export const deleteInvoice = async (userId: string, invoiceId: string) => {
     const invoiceRef = doc(db, 'users', userId, 'invoices', invoiceId);
     await deleteDoc(invoiceRef);

@@ -28,6 +28,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { name: 'Invoices', path: '/invoices', icon: 'description' },
     { name: 'Clients', path: '/clients', icon: 'group' },
     { name: 'Payments', path: '/payments', icon: 'account_balance_wallet' },
+    { name: 'Reports', path: '/reports', icon: 'bar_chart' },
     { name: 'Settings', path: '/settings', icon: 'settings' },
   ];
 
@@ -184,7 +185,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </header>
 
-        <div className="flex-1 p-4 lg:p-10 max-w-7xl mx-auto w-full pb-24 lg:pb-10">
+        <div className="flex-1 p-2 sm:p-4 lg:p-10 max-w-7xl mx-auto w-full pb-24 lg:pb-10 overflow-x-hidden">
           {children}
         </div>
 

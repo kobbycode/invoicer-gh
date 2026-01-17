@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   AreaChart,
   Area,
@@ -8,43 +9,20 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { useNavigate } from 'react-router-dom';
+import { useInvoices } from '../hooks/useInvoices';
+import { useClients } from '../hooks/useClients';
+import { InvoiceStatus } from '../types';
 import { useAuth } from '../context/AuthContext';
-import { getInvoices } from '../services/invoiceService';
-import { getClients } from '../services/clientService';
-import { Invoice, Client, InvoiceStatus } from '../types';
+import { Skeleton } from '../components/ui/Skeleton';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const navigate = useNavigate();
   const { userProfile } = useAuth();
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [clients, setClients] = useState<Client[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (userProfile?.uid) {
-      fetchData();
-    } else {
-      setLoading(false);
-    }
-  }, [userProfile]);
-
-  const fetchData = async () => {
-    if (!userProfile?.uid) return;
-    try {
-      setLoading(true);
-      const [invoicesData, clientsData] = await Promise.all([
-        getInvoices(userProfile.uid),
-        getClients(userProfile.uid)
-      ]);
-      setInvoices(invoicesData);
-      setClients(clientsData);
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { invoices, isLoading: invoicesLoading } = useInvoices();
+  const { clients, isLoading: clientsLoading } = useClients();
+  const loading = invoicesLoading || clientsLoading;
 
   const stats = useMemo(() => {
     const totalRevenue = invoices
@@ -86,6 +64,56 @@ const Dashboard: React.FC = () => {
 
   const recentInvoices = invoices.slice(0, 5); // Get first 5
 
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-48 rounded-lg" />
+            <Skeleton className="h-4 w-64 rounded" />
+          </div>
+          <Skeleton className="h-12 w-32 rounded-xl" />
+        </header>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="space-y-3">
+              <Skeleton className="h-3 w-20 rounded" />
+              <Skeleton className="h-8 w-32 rounded" />
+            </Card>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-4">
+            <Card className="h-[400px] flex items-center justify-center">
+              <Skeleton className="h-[350px] w-full rounded-xl" />
+            </Card>
+          </div>
+          <div className="space-y-6">
+            <Card>
+              <div className="flex justify-between items-center mb-6">
+                <Skeleton className="h-6 w-32 rounded" />
+                <Skeleton className="h-4 w-16 rounded" />
+              </div>
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex justify-between items-center p-3 border rounded-xl border-gray-50">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-24 rounded" />
+                      <Skeleton className="h-3 w-16 rounded" />
+                    </div>
+                    <Skeleton className="h-5 w-16 rounded" />
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -93,13 +121,22 @@ const Dashboard: React.FC = () => {
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Overview</h2>
           <p className="text-gray-500 text-sm sm:text-base mt-1">Welcome back, {userProfile?.name?.split(' ')[0] || 'User'}</p>
         </div>
-        <button onClick={() => navigate('/invoices/new')} className="sm:hidden bg-primary text-white h-10 px-4 rounded-xl text-xs font-bold shadow-lg shadow-primary/20 flex items-center gap-2 active:scale-95 transition-transform">
-          <span className="material-symbols-outlined text-lg">add</span> New
-        </button>
+        <Button
+          onClick={() => navigate('/invoices/new')}
+          className="sm:hidden"
+          size="sm"
+          leftIcon={<span className="material-symbols-outlined text-lg">add</span>}
+        >
+          New
+        </Button>
         <div className="hidden sm:flex gap-3 text-sm">
-          <button onClick={() => navigate('/invoices/new')} className="bg-primary text-white h-12 px-6 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 flex items-center gap-2 hover:scale-105 transition-transform">
-            <span className="material-symbols-outlined">add</span> New Invoice
-          </button>
+          <Button
+            onClick={() => navigate('/invoices/new')}
+            size="lg"
+            leftIcon={<span className="material-symbols-outlined">add</span>}
+          >
+            New Invoice
+          </Button>
         </div>
       </header>
 
@@ -110,8 +147,15 @@ const Dashboard: React.FC = () => {
           { label: 'Total Invoices', value: stats.totalInvoices.toString(), change: '+0%', icon: 'description', color: 'text-blue-600' },
           { label: 'Pending Invoices', value: `${userProfile?.preferences?.defaultCurrency === 'GHS' || !userProfile?.preferences?.defaultCurrency ? 'GH₵' : userProfile.preferences.defaultCurrency} ${stats.pendingValue.toLocaleString()}`, change: '+0%', icon: 'pending', color: 'text-amber-600' },
           { label: 'Total Clients', value: stats.totalClients.toString(), change: '+0%', icon: 'group', color: 'text-purple-600' },
-        ].map((stat) => (
-          <div key={stat.label} className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm transition-all hover:shadow-md hover:border-primary/20 group">
+        ].map((stat, index) => (
+          <Card
+            hoverEffect
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            key={stat.label}
+            className="group"
+          >
             <div className="flex justify-between items-start mb-4">
               <div className={`size-8 sm:size-10 rounded-xl bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors group-hover:bg-primary/5 ${stat.color}`}>
                 <span className="material-symbols-outlined text-lg sm:text-2xl">{stat.icon}</span>
@@ -123,13 +167,13 @@ const Dashboard: React.FC = () => {
             </div>
             <p className="text-gray-400 text-[9px] sm:text-xs font-bold uppercase tracking-widest">{stat.label}</p>
             <h3 className="text-lg sm:text-2xl font-black mt-0.5 sm:mt-1">{stat.value}</h3>
-          </div>
+          </Card>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Chart */}
-        <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm">
+        <Card className="lg:col-span-2 lg:p-8 sm:rounded-3xl">
           <div className="flex justify-between items-center mb-4 sm:mb-6 lg:mb-8">
             <h3 className="font-black text-base sm:text-lg">Revenue Trends</h3>
             <select className="bg-gray-50 border-none text-[10px] sm:text-xs font-bold rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
@@ -174,13 +218,13 @@ const Dashboard: React.FC = () => {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </Card>
 
         {/* Recent Invoices */}
-        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm">
+        <Card className="lg:p-8 sm:rounded-3xl">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-black text-lg">Recent Invoices</h3>
-            <button onClick={() => navigate('/invoices')} className="text-primary text-xs font-bold hover:underline">View All</button>
+            <Button variant="link" size="sm" onClick={() => navigate('/invoices')} className="text-primary">View All</Button>
           </div>
           <div className="space-y-6">
             {recentInvoices.length === 0 ? (
@@ -204,10 +248,16 @@ const Dashboard: React.FC = () => {
               ))
             )}
           </div>
-          <button onClick={() => navigate('/create-invoice')} className="w-full mt-6 py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-400 text-xs font-black uppercase tracking-widest hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-lg">add</span> Create New
-          </button>
-        </div>
+          <Button
+            onClick={() => navigate('/invoices/new')}
+            variant="outline"
+            fullWidth
+            className="mt-6 border-dashed text-gray-400 dark:text-gray-500 border-2 border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary dark:hover:text-primary"
+            leftIcon={<span className="material-symbols-outlined text-lg">add</span>}
+          >
+            CREATE NEW
+          </Button>
+        </Card>
       </div>
     </div>
   );
