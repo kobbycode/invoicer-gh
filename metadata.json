@@ -1,0 +1,7 @@
+{
+  "name": "Invoicer GH",
+  "description": "A professional invoicing suite tailored for Ghanaian freelancers and SMEs, featuring native MoMo integration, GHS accounting, and statutory levy calculations.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
