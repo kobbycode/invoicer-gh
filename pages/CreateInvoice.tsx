@@ -64,9 +64,10 @@ const CreateInvoice: React.FC = () => {
     { id: '1', description: '', quantity: 1, price: 0 }
   ]);
 
-  const [vatEnabled, setVatEnabled] = useState(true);
-  const [leviesEnabled, setLeviesEnabled] = useState(true);
-  const [covidLevyEnabled, setCovidLevyEnabled] = useState(true);
+  const [vatEnabled, setVatEnabled] = useState(false);
+  const [leviesEnabled, setLeviesEnabled] = useState(false);
+  const [covidLevyEnabled, setCovidLevyEnabled] = useState(false);
+  const [showTaxModal, setShowTaxModal] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClientId, setSelectedClientId] = useState('');
 
@@ -527,22 +528,13 @@ const CreateInvoice: React.FC = () => {
               </button>
             </div>
 
-            <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-100">
-              <p className="text-xs font-bold mb-3 sm:mb-4 uppercase tracking-widest text-gray-500">Ghana Statutory Levies</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl border border-gray-100 bg-gray-50/50">
-                  <span className="text-xs sm:text-sm font-bold">VAT ({taxRate}%)</span>
-                  <input checked={vatEnabled} onChange={() => setVatEnabled(!vatEnabled)} className="rounded-lg text-primary focus:ring-primary size-5 sm:size-6" type="checkbox" />
-                </div>
-                <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl border border-gray-100 bg-gray-50/50">
-                  <span className="text-xs sm:text-sm font-bold text-left">NHIL & GETFund (2.5% ea)</span>
-                  <input checked={leviesEnabled} onChange={() => setLeviesEnabled(!leviesEnabled)} className="rounded-lg text-primary focus:ring-primary size-5 sm:size-6" type="checkbox" />
-                </div>
-                <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl border border-gray-100 bg-gray-50/50 sm:col-span-2">
-                  <span className="text-xs sm:text-sm font-bold">COVID-19 Levy (1%)</span>
-                  <input checked={covidLevyEnabled} onChange={() => setCovidLevyEnabled(!covidLevyEnabled)} className="rounded-lg text-primary focus:ring-primary size-5 sm:size-6" type="checkbox" />
-                </div>
-              </div>
+            <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-100 flex justify-end">
+              <button 
+                onClick={() => setShowTaxModal(true)}
+                className="flex items-center gap-2 text-primary font-bold text-sm bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-lg transition-colors"
+              >
+                <span className="material-symbols-outlined text-lg">add_circle</span> Add Tax
+              </button>
             </div>
           </section>
         </div>
@@ -725,6 +717,73 @@ const CreateInvoice: React.FC = () => {
               >
                 Create Account Now
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tax Management Modal */}
+      {showTaxModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 sm:p-8">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-black flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary">account_balance</span>
+                  Manage Taxes
+                </h3>
+                <button 
+                  onClick={() => setShowTaxModal(false)}
+                  className="size-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-gray-500 text-lg">close</span>
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setVatEnabled(!vatEnabled)}>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold">VAT</span>
+                    <span className="text-xs text-gray-500">Value Added Tax ({taxRate}%)</span>
+                  </div>
+                  <div className={`w-12 h-6 rounded-full p-1 transition-colors ${vatEnabled ? 'bg-primary' : 'bg-gray-300'}`}>
+                    <div className={`bg-white size-4 rounded-full shadow-sm transition-transform ${vatEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setLeviesEnabled(!leviesEnabled)}>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold">NHIL & GETFund</span>
+                    <span className="text-xs text-gray-500">National Health & Edu. (2.5% ea)</span>
+                  </div>
+                  <div className={`w-12 h-6 rounded-full p-1 transition-colors ${leviesEnabled ? 'bg-primary' : 'bg-gray-300'}`}>
+                    <div className={`bg-white size-4 rounded-full shadow-sm transition-transform ${leviesEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setCovidLevyEnabled(!covidLevyEnabled)}>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold">COVID-19 Levy</span>
+                    <span className="text-xs text-gray-500">Recovery Levy (1%)</span>
+                  </div>
+                  <div className={`w-12 h-6 rounded-full p-1 transition-colors ${covidLevyEnabled ? 'bg-primary' : 'bg-gray-300'}`}>
+                    <div className={`bg-white size-4 rounded-full shadow-sm transition-transform ${covidLevyEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <div className="flex justify-between items-center text-sm font-bold mb-4">
+                  <span className="text-gray-500">Tax Impact</span>
+                  <span className="text-primary">+ {((vatEnabled ? taxRate : 0) + (leviesEnabled ? 5 : 0) + (covidLevyEnabled ? 1 : 0)).toFixed(1)}%</span>
+                </div>
+                <button
+                  onClick={() => setShowTaxModal(false)}
+                  className="w-full bg-primary text-white py-3.5 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
+                >
+                  Apply Taxes
+                </button>
+              </div>
             </div>
           </div>
         </div>
