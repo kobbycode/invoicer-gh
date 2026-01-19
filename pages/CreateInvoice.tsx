@@ -434,6 +434,16 @@ const CreateInvoice: React.FC = () => {
                 />
               </label>
               <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-bold text-gray-600 uppercase">Email Address</span>
+                <input
+                  value={clientDetails.email}
+                  onChange={e => setClientDetails({ ...clientDetails, email: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="client@example.com"
+                  type="email"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
                 <span className="text-xs font-bold text-gray-600 uppercase">Phone Number</span>
                 <input
                   value={clientDetails.phone}
@@ -443,7 +453,17 @@ const CreateInvoice: React.FC = () => {
                   type="tel"
                 />
               </label>
-              <label className="flex flex-col gap-1.5">
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-xs font-bold text-gray-600 uppercase">Location / Address</span>
+                <input
+                  value={clientDetails.location}
+                  onChange={e => setClientDetails({ ...clientDetails, location: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="City, Region"
+                  type="text"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
                 <span className="text-xs font-bold text-gray-600 uppercase">Due Date</span>
                 <input
                   value={dueDate}
@@ -580,8 +600,6 @@ const CreateInvoice: React.FC = () => {
                     <div>
                       <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Bill To</p>
                       <p className="font-black text-base sm:text-lg">{clientDetails.name || 'Client Name'}</p>
-                      <p className="text-xs text-gray-500 font-bold mt-1">{clientDetails.phone || '+233 ...'}</p>
-                      <p className="text-xs text-gray-500 font-bold">{clientDetails.location || 'Location'}</p>
                     </div>
                     <div className="text-left sm:text-right">
                       <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Due Date</p>
