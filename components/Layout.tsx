@@ -196,7 +196,33 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {children}
         </div>
 
-        {/* Mobile Bottom Navigation */}
+        {/* Guest Warning Modal */}
+      {userProfile?.name === 'Guest' && (
+        <div className="fixed bottom-20 right-4 z-50 animate-in slide-in-from-bottom-10 fade-in duration-500">
+          <div className="bg-[#121417] text-white p-5 rounded-2xl shadow-2xl shadow-primary/20 border border-white/10 max-w-xs relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-purple-500"></div>
+            <div className="flex items-start gap-3 relative z-10">
+              <div className="size-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 animate-pulse">
+                <span className="material-symbols-outlined text-amber-400">timer</span>
+              </div>
+              <div>
+                <h4 className="font-black text-sm mb-1">Guest Account Active</h4>
+                <p className="text-[10px] text-gray-400 leading-relaxed mb-3">
+                  Your guest session is temporary. Data may be lost after 7 days.
+                </p>
+                <button 
+                  onClick={() => navigate('/')} 
+                  className="text-xs font-black uppercase tracking-widest text-primary hover:text-white transition-colors flex items-center gap-1"
+                >
+                  Create Account Now <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Bottom Navigation */}
         <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1a212c] border-t border-[#dce0e4] dark:border-gray-700 px-6 py-3 flex justify-between items-center z-40 backdrop-blur-lg bg-white/90">
           {navItems.map((item) => (
             <NavLink
