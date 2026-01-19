@@ -28,7 +28,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { name: 'Invoices', path: '/invoices', icon: 'description' },
     { name: 'Clients', path: '/clients', icon: 'group' },
     { name: 'Payments', path: '/payments', icon: 'account_balance_wallet' },
-    { name: 'Reports', path: '/reports', icon: 'bar_chart' },
     { name: 'Settings', path: '/settings', icon: 'settings' },
   ];
 

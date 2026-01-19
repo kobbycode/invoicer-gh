@@ -4,6 +4,7 @@ import {
     getDocs,
     query,
     orderBy,
+    where,
     deleteDoc,
     doc,
     updateDoc
@@ -24,6 +25,13 @@ export interface Payment {
 export const getPayments = async (userId: string): Promise<Payment[]> => {
     const paymentsRef = collection(db, 'users', userId, 'payments');
     const q = query(paymentsRef, orderBy('date', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Payment));
+};
+
+export const getPaymentsByClient = async (userId: string, clientName: string): Promise<Payment[]> => {
+    const paymentsRef = collection(db, 'users', userId, 'payments');
+    const q = query(paymentsRef, where('clientName', '==', clientName), orderBy('date', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Payment));
 };
