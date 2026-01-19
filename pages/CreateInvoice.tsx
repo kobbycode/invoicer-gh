@@ -65,6 +65,7 @@ const CreateInvoice: React.FC = () => {
   ]);
 
   const [customTaxRate, setCustomTaxRate] = useState<number>(0);
+  const [taxInput, setTaxInput] = useState<string>('');
   const [showTaxModal, setShowTaxModal] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClientId, setSelectedClientId] = useState('');
@@ -525,7 +526,10 @@ const CreateInvoice: React.FC = () => {
 
             <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-100 flex justify-end">
               <button 
-                onClick={() => setShowTaxModal(true)}
+                onClick={() => {
+                  setTaxInput(customTaxRate > 0 ? customTaxRate.toString() : '');
+                  setShowTaxModal(true);
+                }}
                 className="flex items-center gap-2 text-primary font-bold text-sm bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-lg transition-colors"
               >
                 <span className="material-symbols-outlined text-lg">add_circle</span> Add Tax
@@ -730,10 +734,12 @@ const CreateInvoice: React.FC = () => {
                     type="number"
                     step="0.01"
                     min="0"
-                    value={customTaxRate}
+                    value={taxInput}
+                    onFocus={() => {
+                      if (taxInput === '' || taxInput === '0') setTaxInput('');
+                    }}
                     onChange={(e) => {
-                      const v = parseFloat(e.target.value);
-                      setCustomTaxRate(Number.isFinite(v) ? v : 0);
+                      setTaxInput(e.target.value);
                     }}
                     className="rounded-xl border-[#dce0e4] bg-white h-11 text-sm focus:ring-primary focus:border-primary px-3"
                     placeholder="e.g. 12.5"
@@ -744,10 +750,14 @@ const CreateInvoice: React.FC = () => {
               <div className="mt-8 pt-6 border-t border-gray-100">
                 <div className="flex justify-between items-center text-sm font-bold mb-4">
                    <span className="text-gray-500">Tax Impact</span>
-                   <span className="text-primary">+ {customTaxRate.toFixed(2)}%</span>
+                   <span className="text-primary">+ {(taxInput !== '' ? (parseFloat(taxInput) || 0) : customTaxRate).toFixed(2)}%</span>
                 </div>
                 <button
-                  onClick={() => setShowTaxModal(false)}
+                   onClick={() => {
+                     const v = parseFloat(taxInput);
+                     setCustomTaxRate(Number.isFinite(v) && v >= 0 ? v : 0);
+                     setShowTaxModal(false);
+                   }}
                   className="w-full bg-primary text-white py-3.5 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
                 >
                    Apply Tax
