@@ -8,6 +8,12 @@ import { createInvoice } from '../services/invoiceService';
 import { Client, LineItem, InvoiceStatus } from '../types';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import {
+  canCreateInvoice,
+  getRemainingInvoices,
+  incrementGuestInvoiceCount,
+  hasReachedInvoiceLimit
+} from '../utils/guestManager';
 
 const getNetworkLogo = (network: string | undefined) => {
   if (!network) return null;
@@ -21,12 +27,16 @@ const getNetworkLogo = (network: string | undefined) => {
 
 const CreateInvoice: React.FC = () => {
   const navigate = useNavigate();
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const { showAlert } = useAlert();
   const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState<'edit' | 'preview'>('edit');
   const [scale, setScale] = useState(1);
   const previewContainerRef = React.useRef<HTMLDivElement>(null);
+  const [showLockoutModal, setShowLockoutModal] = useState(false);
+
+  const isGuest = currentUser?.isAnonymous || false;
+  const remainingInvoices = isGuest ? getRemainingInvoices() : Infinity;
 
 
 
@@ -165,6 +175,13 @@ const CreateInvoice: React.FC = () => {
 
   const handleSave = async (status: InvoiceStatus = InvoiceStatus.PENDING) => {
     if (!userProfile?.uid) return;
+
+    // Check guest invoice limit
+    if (isGuest && !canCreateInvoice(isGuest)) {
+      setShowLockoutModal(true);
+      return;
+    }
+
     if (!clientDetails.name || items.some(i => !i.description)) {
       showAlert('Missing Info', 'Please provide client name and item descriptions.', 'warning');
       return;
@@ -202,6 +219,12 @@ const CreateInvoice: React.FC = () => {
           tin: businessDetails.tin || ''
         }
       });
+
+      // Increment guest invoice count if guest user
+      if (isGuest) {
+        incrementGuestInvoiceCount();
+      }
+
       navigate('/invoices');
     } catch (error) {
       console.error("Error saving invoice:", error);
@@ -665,6 +688,72 @@ const CreateInvoice: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Guest Info Banner */}
+      {isGuest && remainingInvoices > 0 && (
+        <div className="fixed bottom-24 left-4 right-4 lg:bottom-6 lg:left-auto lg:right-6 lg:w-96 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-700 rounded-2xl p-4 shadow-xl z-50 animate-in slide-in-from-bottom-5 duration-500">
+          <div className="flex items-start gap-3">
+            <div className="size-10 bg-amber-100 dark:bg-amber-800 rounded-xl flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-amber-600 dark:text-amber-400">info</span>
+            </div>
+            <div className="flex-1">
+              <h4 className="font-black text-sm mb-1">Guest Mode Active</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-400 font-bold">
+                You have <span className="text-amber-600 dark:text-amber-400 font-black">{remainingInvoices}</span> {remainingInvoices === 1 ? 'invoice' : 'invoices'} remaining. Register to unlock unlimited access.
+              </p>
+              <button
+                onClick={() => navigate('/login')}
+                className="mt-2 text-xs font-black text-primary underline"
+              >
+                Create Account Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lockout Modal */}
+      {showLockoutModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-center">
+              <div className="size-20 mx-auto rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mb-6">
+                <span className="material-symbols-outlined text-4xl text-amber-600 dark:text-amber-400">lock</span>
+              </div>
+              <h3 className="text-2xl font-black mb-3">Guest Limit Reached</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">
+                You have reached the 7 invoice limit for guest users. Create a free account to generate unlimited invoices and unlock all features.
+              </p>
+              <div className="space-y-3">
+                <button
+                  onClick={() => navigate('/login')}
+                  className="w-full bg-primary text-white py-3.5 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
+                >
+                  Create Free Account
+                </button>
+                <button
+                  onClick={() => setShowLockoutModal(false)}
+                  className="w-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 py-3.5 rounded-xl font-bold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Go Back
+                </button>
+              </div>
+            </div>
+            <div className="bg-primary/5 dark:bg-primary/10 p-4 border-t border-primary/10">
+              <div className="flex items-center justify-center gap-6 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-green-600 text-base">check_circle</span>
+                  <span className="font-bold text-gray-600 dark:text-gray-400">Unlimited Invoices</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-green-600 text-base">check_circle</span>
+                  <span className="font-bold text-gray-600 dark:text-gray-400">Cloud Sync</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

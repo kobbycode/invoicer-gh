@@ -1,9 +1,36 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signInAnonymously } from 'firebase/auth';
+import { auth } from '../lib/firebase';
+import { createUserProfile } from '../services/userService';
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
+  const [guestLoading, setGuestLoading] = useState(false);
+
+  const handleGuestLogin = async () => {
+    if (!auth) {
+      alert('Authentication is not configured. Please set up Firebase.');
+      return;
+    }
+
+    setGuestLoading(true);
+    try {
+      const userCredential = await signInAnonymously(auth);
+      await createUserProfile(userCredential.user, {
+        name: 'Guest',
+        email: '',
+        address: '',
+      });
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Guest login failed:', error);
+      alert('Failed to continue as guest. Please try again.');
+    } finally {
+      setGuestLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-background-dark">
@@ -37,13 +64,24 @@ const Landing: React.FC = () => {
               <p className="text-[#667385] dark:text-gray-400 text-base sm:text-xl leading-relaxed max-w-[540px]">
                 Built for the modern GH freelancer. Accept MoMo payments, track Cedis, and share professional invoices via WhatsApp instantly.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto">
-                <button onClick={() => navigate('/login')} className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white px-8 py-5 rounded-2xl text-sm sm:text-lg font-black uppercase tracking-wider transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2">
-                  Start Free Now <span className="material-symbols-outlined">arrow_forward</span>
-                </button>
-                <button className="w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-[#121417] dark:text-white px-8 py-5 rounded-2xl text-sm sm:text-lg font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm">
-                  Watch Demo
-                </button>
+              <div className="flex flex-col gap-4 pt-4 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button onClick={() => navigate('/login')} className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white px-8 py-5 rounded-2xl text-sm sm:text-lg font-black uppercase tracking-wider transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2">
+                    Start Free Now <span className="material-symbols-outlined">arrow_forward</span>
+                  </button>
+                  <button
+                    onClick={handleGuestLogin}
+                    disabled={guestLoading}
+                    className="w-full sm:w-auto bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-[#121417] dark:text-white px-8 py-5 rounded-2xl text-sm sm:text-lg font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+                  >
+                    {guestLoading ? 'Loading...' : 'Try as Guest'}
+                  </button>
+                </div>
+                <div className="text-center">
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                    Guest Mode: Try 7 invoices free, no signup required
+                  </p>
+                </div>
               </div>
             </div>
 

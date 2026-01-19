@@ -9,7 +9,8 @@ import { auth } from '../lib/firebase';
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
+  const isGuest = currentUser?.isAnonymous || false;
   const { unreadCount, notificationHistory, clearUnread } = useNotification();
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -173,10 +174,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
               <div className="flex items-center gap-3 cursor-pointer group">
                 <div className="hidden lg:block text-right">
-                  <p className="text-sm font-bold">{userProfile?.name || 'User'}</p>
-                  <p className="text-[10px] text-[#667385] uppercase font-bold tracking-tighter">{userProfile?.email || 'KVoice User'}</p>
+                  <div className="flex items-center justify-end gap-2">
+                    <p className="text-sm font-bold">{userProfile?.name || 'User'}</p>
+                    {isGuest && (
+                      <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[8px] font-black uppercase tracking-widest">Guest</span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-[#667385] uppercase font-bold tracking-tighter">
+                    {isGuest ? 'Limited Access' : (userProfile?.email || 'KVoice User')}
+                  </p>
                 </div>
-                <div className="size-10 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-primary font-black">
+                <div className={`size-10 rounded-full ${isGuest ? 'bg-amber-100 border-2 border-amber-200 text-amber-700' : 'bg-primary/10 border-2 border-primary/20 text-primary'} flex items-center justify-center font-black`}>
                   {userProfile?.name ? userProfile.name.charAt(0).toUpperCase() : 'U'}
                 </div>
               </div>
