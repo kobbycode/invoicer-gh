@@ -702,7 +702,7 @@ const CreateInvoice: React.FC = () => {
                 You have <span className="text-amber-600 dark:text-amber-400 font-black">{remainingInvoices}</span> {remainingInvoices === 1 ? 'invoice' : 'invoices'} remaining. Register to unlock unlimited access.
               </p>
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/')}
                 className="mt-2 text-xs font-black text-primary underline"
               >
                 Create Account Now
