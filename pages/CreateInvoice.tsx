@@ -64,9 +64,7 @@ const CreateInvoice: React.FC = () => {
     { id: '1', description: '', quantity: 1, price: 0 }
   ]);
 
-  const [vatEnabled, setVatEnabled] = useState(false);
-  const [leviesEnabled, setLeviesEnabled] = useState(false);
-  const [covidLevyEnabled, setCovidLevyEnabled] = useState(false);
+  const [customTaxRate, setCustomTaxRate] = useState<number>(0);
   const [showTaxModal, setShowTaxModal] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClientId, setSelectedClientId] = useState('');
@@ -156,11 +154,8 @@ const CreateInvoice: React.FC = () => {
   };
 
   const subtotal = useMemo(() => items.reduce((acc, item) => acc + (item.quantity * item.price), 0), [items]);
-  const taxRate = userProfile?.preferences?.defaultTaxRate || 15;
-  const vatAmount = vatEnabled ? subtotal * (taxRate / 100) : 0;
-  const leviesAmount = leviesEnabled ? subtotal * 0.05 : 0; // NHIL 2.5% + GETFund 2.5%
-  const covidAmount = covidLevyEnabled ? subtotal * 0.01 : 0;
-  const total = subtotal + vatAmount + leviesAmount + covidAmount;
+  const customTaxAmount = useMemo(() => subtotal * (customTaxRate / 100), [subtotal, customTaxRate]);
+  const total = subtotal + customTaxAmount;
   const currency = userProfile?.preferences?.defaultCurrency || 'GHS';
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,9 +192,9 @@ const CreateInvoice: React.FC = () => {
         items,
         status,
         currency,
-        vatEnabled,
-        leviesEnabled,
-        covidLevyEnabled,
+        vatEnabled: customTaxRate > 0,
+        leviesEnabled: false,
+        covidLevyEnabled: false,
         total,
         client: {
           id: selectedClientId || 'new',
@@ -625,22 +620,10 @@ const CreateInvoice: React.FC = () => {
                       <span className="text-gray-400 uppercase tracking-widest">Subtotal</span>
                       <span>GH₵ {subtotal.toLocaleString()}</span>
                     </div>
-                    {vatEnabled && (
+                    {customTaxRate > 0 && (
                       <div className="flex justify-between w-full sm:w-64 text-xs sm:text-sm font-bold">
-                        <span className="text-gray-400 uppercase tracking-widest">VAT ({taxRate}%)</span>
-                        <span>{currency === 'GHS' ? 'GH₵' : currency} {vatAmount.toLocaleString()}</span>
-                      </div>
-                    )}
-                    {leviesEnabled && (
-                      <div className="flex justify-between w-full sm:w-64 text-xs sm:text-sm font-bold">
-                        <span className="text-gray-400 uppercase tracking-widest">Levies (5%)</span>
-                        <span>{currency === 'GHS' ? 'GH₵' : currency} {leviesAmount.toLocaleString()}</span>
-                      </div>
-                    )}
-                    {covidLevyEnabled && (
-                      <div className="flex justify-between w-full sm:w-64 text-xs sm:text-sm font-bold">
-                        <span className="text-gray-400 uppercase tracking-widest">COVID-19 (1%)</span>
-                        <span>{currency === 'GHS' ? 'GH₵' : currency} {covidAmount.toLocaleString()}</span>
+                        <span className="text-gray-400 uppercase tracking-widest">Tax ({customTaxRate}%)</span>
+                        <span>{currency === 'GHS' ? 'GH₵' : currency} {customTaxAmount.toLocaleString()}</span>
                       </div>
                     )}
                     <div className="flex justify-between w-full sm:w-80 text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 mt-2 sm:mt-3 border-t-2 border-gray-100 font-black text-primary">
@@ -730,7 +713,7 @@ const CreateInvoice: React.FC = () => {
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-black flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary">account_balance</span>
-                  Manage Taxes
+                   Add Tax
                 </h3>
                 <button 
                   onClick={() => setShowTaxModal(false)}
@@ -741,47 +724,33 @@ const CreateInvoice: React.FC = () => {
               </div>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setVatEnabled(!vatEnabled)}>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold">VAT</span>
-                    <span className="text-xs text-gray-500">Value Added Tax ({taxRate}%)</span>
-                  </div>
-                  <div className={`w-12 h-6 rounded-full p-1 transition-colors ${vatEnabled ? 'bg-primary' : 'bg-gray-300'}`}>
-                    <div className={`bg-white size-4 rounded-full shadow-sm transition-transform ${vatEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setLeviesEnabled(!leviesEnabled)}>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold">NHIL & GETFund</span>
-                    <span className="text-xs text-gray-500">National Health & Edu. (2.5% ea)</span>
-                  </div>
-                  <div className={`w-12 h-6 rounded-full p-1 transition-colors ${leviesEnabled ? 'bg-primary' : 'bg-gray-300'}`}>
-                    <div className={`bg-white size-4 rounded-full shadow-sm transition-transform ${leviesEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setCovidLevyEnabled(!covidLevyEnabled)}>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold">COVID-19 Levy</span>
-                    <span className="text-xs text-gray-500">Recovery Levy (1%)</span>
-                  </div>
-                  <div className={`w-12 h-6 rounded-full p-1 transition-colors ${covidLevyEnabled ? 'bg-primary' : 'bg-gray-300'}`}>
-                    <div className={`bg-white size-4 rounded-full shadow-sm transition-transform ${covidLevyEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
-                  </div>
-                </div>
+                <label className="flex flex-col gap-2">
+                  <span className="text-xs font-bold text-gray-600 uppercase">Tax Percentage (%)</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={customTaxRate}
+                    onChange={(e) => {
+                      const v = parseFloat(e.target.value);
+                      setCustomTaxRate(Number.isFinite(v) ? v : 0);
+                    }}
+                    className="rounded-xl border-[#dce0e4] bg-white h-11 text-sm focus:ring-primary focus:border-primary px-3"
+                    placeholder="e.g. 12.5"
+                  />
+                </label>
               </div>
 
               <div className="mt-8 pt-6 border-t border-gray-100">
                 <div className="flex justify-between items-center text-sm font-bold mb-4">
-                  <span className="text-gray-500">Tax Impact</span>
-                  <span className="text-primary">+ {((vatEnabled ? taxRate : 0) + (leviesEnabled ? 5 : 0) + (covidLevyEnabled ? 1 : 0)).toFixed(1)}%</span>
+                   <span className="text-gray-500">Tax Impact</span>
+                   <span className="text-primary">+ {customTaxRate.toFixed(2)}%</span>
                 </div>
                 <button
                   onClick={() => setShowTaxModal(false)}
                   className="w-full bg-primary text-white py-3.5 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
                 >
-                  Apply Taxes
+                   Apply Tax
                 </button>
               </div>
             </div>
