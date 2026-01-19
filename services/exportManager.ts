@@ -1,3 +1,5 @@
+import { User } from 'firebase/auth';
+
 const EXPORT_COUNT_KEY = 'kvoice_guest_export_count';
 const MAX_FREE_EXPORTS = 7;
 
@@ -11,8 +13,9 @@ export const incrementExportCount = (): void => {
     localStorage.setItem(EXPORT_COUNT_KEY, (current + 1).toString());
 };
 
-export const canExport = (isLoggedIn: boolean): boolean => {
-    if (isLoggedIn) return true;
+export const canExport = (user: User | null): boolean => {
+    if (!user) return false;
+    if (!user.isAnonymous) return true; // Full users have no limit
     return getExportCount() < MAX_FREE_EXPORTS;
 };
 
@@ -24,7 +27,8 @@ export const resetExportCount = (): void => {
     localStorage.removeItem(EXPORT_COUNT_KEY);
 };
 
-export const hasReachedLimit = (isLoggedIn: boolean): boolean => {
-    if (isLoggedIn) return false;
+export const hasReachedLimit = (user: User | null): boolean => {
+    if (!user) return true;
+    if (!user.isAnonymous) return false;
     return getExportCount() >= MAX_FREE_EXPORTS;
 };

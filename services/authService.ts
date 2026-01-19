@@ -1,6 +1,7 @@
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    signInAnonymously,
     signOut,
     UserCredential,
     AuthError
@@ -42,4 +43,22 @@ export const loginUser = async (email: string, password: string): Promise<UserCr
 
 export const logoutUser = async (): Promise<void> => {
     await signOut(auth);
+};
+
+export const loginAsGuest = async (): Promise<UserCredential> => {
+    try {
+        const userCredential = await signInAnonymously(auth);
+
+        // Create a default profile for the guest
+        await createUserProfile(userCredential.user, {
+            name: 'Guest',
+            email: '',
+            address: '',
+        });
+
+        return userCredential;
+    } catch (error) {
+        console.error("Guest login error:", error);
+        throw error;
+    }
 };
