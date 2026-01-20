@@ -174,75 +174,18 @@ const Clients: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="group relative"
+                className="group"
               >
-                <button
-                  onClick={(e) => handleDelete(client.id, e)}
-                  className="absolute top-4 right-4 p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-                  aria-label="Delete client"
-                >
-                  <span className="material-symbols-outlined text-lg">delete</span>
-                </button>
-
-                <div className="flex items-center gap-4 mb-4">
-                  <div className={`size-12 sm:size-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center text-xl font-black shadow-lg shadow-blue-200`}>
+                <div className="flex items-center gap-4">
+                  <div className="size-12 sm:size-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center text-xl font-black shadow-lg shadow-blue-200">
                     {client.name.charAt(0)}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-base sm:text-lg truncate">{client.name}</h3>
-                    <p className="text-gray-400 text-xs font-bold truncate">{client.email}</p>
-                  </div>
+                  <h3 className="font-bold text-base sm:text-lg truncate">{client.name}</h3>
                 </div>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-gray-500 font-medium">Invoices</span>
-                    <span className="font-black bg-gray-50 dark:bg-gray-900 px-2 py-0.5 rounded text-[10px]">{client.invoicesCount || 0}</span>
-                  </div>
-                  {(() => {
-                    const clientInvoices = invoices.filter(inv => inv.client?.id === client.id);
-                    const totalBilled = clientInvoices.reduce((acc, inv) => acc + (inv.total || 0), 0);
-                    const totalPaid = clientInvoices
-                      .filter(inv => inv.status === InvoiceStatus.PAID)
-                      .reduce((acc, inv) => acc + (inv.total || 0), 0);
-                    const outstanding = totalBilled - totalPaid;
-                    return (
-                      <>
-                        <div className="flex items-center justify-between text-xs sm:text-sm">
-                          <span className="text-gray-500 font-medium">Total Billed</span>
-                          <span className="font-bold text-right truncate ml-4">GH₵ {totalBilled.toLocaleString()}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs sm:text-sm">
-                          <span className="text-gray-500 font-medium">Total Paid</span>
-                          <span className="font-bold text-right truncate ml-4 text-green-600">GH₵ {totalPaid.toLocaleString()}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs sm:text-sm">
-                          <span className="text-gray-500 font-medium">Outstanding</span>
-                          <span className="font-bold text-right truncate ml-4 text-amber-600">GH₵ {outstanding.toLocaleString()}</span>
-                        </div>
-                      </>
-                    );
-                  })()}
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-gray-500 font-medium">Location</span>
-                    <span className="font-bold text-right truncate ml-4">{client.location || 'N/A'}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 pt-4 border-t border-gray-50 dark:border-gray-700">
-                  <div className="flex-1 bg-gray-50 dark:bg-gray-900 rounded-xl px-3 py-2 min-w-0">
-                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-0.5">MOMO</p>
-                    <p className="text-[10px] sm:text-xs font-bold truncate">{client.momoNetwork} - {client.momoNumber || 'N/A'}</p>
-                  </div>
-                  <button onClick={() => navigate(`/clients/${client.id}`)} className="size-10 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-colors active:scale-95">
-                    <span className="material-symbols-outlined text-lg">visibility</span>
-                  </button>
-                  <button onClick={() => openEditModal(client)} className="size-10 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white hover:border-primary transition-colors active:scale-95">
-                    <span className="material-symbols-outlined text-lg">edit</span>
-                  </button>
-                  <button onClick={(e) => handleDelete(client.id, e)} className="size-10 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 hover:bg-red-500 hover:text-white hover:border-red-500 transition-colors active:scale-95 lg:hidden">
-                    <span className="material-symbols-outlined text-lg">delete</span>
-                  </button>
+                <div className="pt-4 border-t border-gray-50 dark:border-gray-700 flex justify-end">
+                  <Button onClick={() => navigate(`/clients/${client.id}`)} variant="secondary" leftIcon={<span className="material-symbols-outlined">visibility</span>}>
+                    View Details
+                  </Button>
                 </div>
               </Card>
             ))}
