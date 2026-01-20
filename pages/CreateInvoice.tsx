@@ -67,6 +67,8 @@ const CreateInvoice: React.FC = () => {
   const [customTaxRate, setCustomTaxRate] = useState<number>(0);
   const [taxInput, setTaxInput] = useState<string>('');
   const [showTaxModal, setShowTaxModal] = useState(false);
+  const [qtyInputs, setQtyInputs] = useState<Record<string, string>>({});
+  const [priceInputs, setPriceInputs] = useState<Record<string, string>>({});
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClientId, setSelectedClientId] = useState('');
 
@@ -494,8 +496,23 @@ const CreateInvoice: React.FC = () => {
                       <input
                         className="w-full rounded-xl border-[#dce0e4] bg-white sm:bg-gray-50 text-sm h-10 sm:h-11 text-center"
                         type="number"
-                        value={item.quantity}
-                        onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
+                        value={qtyInputs[item.id] ?? item.quantity.toString()}
+                        onFocus={() => {
+                          setQtyInputs(prev => ({ ...prev, [item.id]: item.quantity === 0 ? '' : item.quantity.toString() }));
+                        }}
+                        onChange={(e) => {
+                          const s = e.target.value;
+                          setQtyInputs(prev => ({ ...prev, [item.id]: s }));
+                          const num = parseInt(s);
+                          updateItem(item.id, 'quantity', Number.isFinite(num) ? num : 0);
+                        }}
+                        onBlur={() => {
+                          setQtyInputs(prev => {
+                            const next = { ...prev };
+                            delete next[item.id];
+                            return next;
+                          });
+                        }}
                       />
                     </div>
                     <div className="space-y-1">
@@ -503,8 +520,23 @@ const CreateInvoice: React.FC = () => {
                       <input
                         className="w-full rounded-xl border-[#dce0e4] bg-white sm:bg-gray-50 text-sm h-10 sm:h-11 text-right"
                         type="number"
-                        value={item.price}
-                        onChange={(e) => updateItem(item.id, 'price', parseFloat(e.target.value) || 0)}
+                        value={priceInputs[item.id] ?? item.price.toString()}
+                        onFocus={() => {
+                          setPriceInputs(prev => ({ ...prev, [item.id]: item.price === 0 ? '' : item.price.toString() }));
+                        }}
+                        onChange={(e) => {
+                          const s = e.target.value;
+                          setPriceInputs(prev => ({ ...prev, [item.id]: s }));
+                          const num = parseFloat(s);
+                          updateItem(item.id, 'price', Number.isFinite(num) ? num : 0);
+                        }}
+                        onBlur={() => {
+                          setPriceInputs(prev => {
+                            const next = { ...prev };
+                            delete next[item.id];
+                            return next;
+                          });
+                        }}
                       />
                     </div>
                   </div>
