@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAlert } from '../context/AlertContext';
 import { getClients } from '../services/clientService';
-import { addClient, updateClient, getClients as fetchClients } from '../services/clientService';
+import { addClient, updateClient } from '../services/clientService';
 import { createInvoice } from '../services/invoiceService';
 import { Client, LineItem, InvoiceStatus } from '../types';
 import html2canvas from 'html2canvas';
@@ -458,73 +458,6 @@ const CreateInvoice: React.FC = () => {
               >
                 <span className="material-symbols-outlined text-lg">add_circle</span> Add Tax
               </button>
-            </div>
-          </section>
-          <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <h3 className="text-base sm:text-lg font-black flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-lg sm:text-xl">person_add</span> Client Details
-              </h3>
-              <select
-                className="w-full sm:w-auto rounded-lg border-gray-200 text-xs sm:text-sm py-2 sm:py-1.5 px-3"
-                value={selectedClientId}
-                onChange={handleClientSelect}
-              >
-                <option value="">Select Existing Client...</option>
-                {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <label className="flex flex-col gap-1.5 sm:col-span-2">
-                <span className="text-xs font-bold text-gray-600 uppercase">Client Name / Company</span>
-                <input
-                  value={clientDetails.name}
-                  onChange={e => setClientDetails({ ...clientDetails, name: e.target.value })}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                  placeholder="John Doe or ABC Ghana Corp"
-                  type="text"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold text-gray-600 uppercase">Email Address</span>
-                <input
-                  value={clientDetails.email}
-                  onChange={e => setClientDetails({ ...clientDetails, email: e.target.value })}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                  placeholder="client@example.com"
-                  type="email"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold text-gray-600 uppercase">Phone Number</span>
-                <input
-                  value={clientDetails.phone}
-                  onChange={e => setClientDetails({ ...clientDetails, phone: e.target.value })}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                  placeholder="+233 ..."
-                  type="tel"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5 sm:col-span-2">
-                <span className="text-xs font-bold text-gray-600 uppercase">Location / Address</span>
-                <input
-                  value={clientDetails.location}
-                  onChange={e => setClientDetails({ ...clientDetails, location: e.target.value })}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                  placeholder="City, Region"
-                  type="text"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5 sm:col-span-2">
-                <span className="text-xs font-bold text-gray-600 uppercase">Due Date</span>
-                <input
-                  value={dueDate}
-                  onChange={e => setDueDate(e.target.value)}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary px-3"
-                  type="date"
-                />
-              </label>
             </div>
           </section>
 
