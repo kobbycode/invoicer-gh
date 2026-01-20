@@ -167,8 +167,8 @@ const ViewInvoice: React.FC = () => {
                         name: invoice.businessInfo?.name || '',
                         address: invoice.businessInfo?.address || '',
                         email: invoice.businessInfo?.email || '',
-                        momoNumber: invoice.businessInfo?.momoNumber || '',
-                        momoNetwork: invoice.businessInfo?.momoNetwork || '',
+                        momoNumber: invoice.businessInfo?.momoNumber || userProfile?.momoNumber || '',
+                        momoNetwork: invoice.businessInfo?.momoNetwork || userProfile?.momoNetwork || '',
                         logoUrl: userProfile?.logoUrl || '',
                         tin: invoice.businessInfo?.tin || ''
                     }}

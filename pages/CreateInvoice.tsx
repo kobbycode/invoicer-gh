@@ -260,6 +260,9 @@ const CreateInvoice: React.FC = () => {
           name: businessDetails.name,
           address: businessDetails.address,
           email: businessDetails.email,
+          momoNumber: businessDetails.momoNumber || '',
+          momoNetwork: businessDetails.momoNetwork || '',
+          logoUrl: businessDetails.logoUrl || '',
           tin: businessDetails.tin || ''
         }
       });
