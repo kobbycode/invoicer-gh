@@ -455,7 +455,9 @@ const CreateInvoice: React.FC = () => {
                 </div>
               )}
             </div>
-
+ 
+           </section>
+ 
           <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
               <h3 className="text-base sm:text-lg font-black flex items-center gap-2">
