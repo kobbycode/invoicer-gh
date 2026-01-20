@@ -196,19 +196,38 @@ const CreateInvoice: React.FC = () => {
       setLoading(true);
       let clientId = selectedClientId;
 
-      // Auto-create client if not selected
+      // Determine client: use selected or find existing match; otherwise create
       if (!clientId && clientDetails.name) {
-        const newClient = await addClient(userProfile.uid, {
-          name: clientDetails.name,
-          email: clientDetails.email,
-          momoNumber: clientDetails.phone,
-          momoNetwork: termsMomoNetwork || businessDetails.momoNetwork || 'MTN MOMO',
-          location: clientDetails.location
-        } as any);
-        clientId = newClient.id;
-        setSelectedClientId(clientId);
-        // Refresh local clients list
-        getClients(userProfile.uid).then(setClients);
+        const existing = clients.find(c =>
+          (c.name && c.name.toLowerCase() === clientDetails.name.toLowerCase()) ||
+          (c.email && clientDetails.email && c.email.toLowerCase() === clientDetails.email.toLowerCase()) ||
+          (c.momoNumber && clientDetails.phone && c.momoNumber.replace(/\s+/g, '') === clientDetails.phone.replace(/\s+/g, ''))
+        );
+        if (existing) {
+          clientId = existing.id;
+          setSelectedClientId(clientId);
+          // Optionally sync any updated details
+          const patch: Partial<Client> = {};
+          if (clientDetails.email && clientDetails.email !== existing.email) patch.email = clientDetails.email;
+          if (clientDetails.phone && clientDetails.phone !== existing.momoNumber) patch.momoNumber = clientDetails.phone;
+          if (clientDetails.location && clientDetails.location !== existing.location) patch.location = clientDetails.location;
+          if (Object.keys(patch).length > 0) {
+            await updateClient(userProfile.uid, clientId, patch as any);
+            setClients(prev => prev.map(c => c.id === clientId ? { ...c, ...patch } : c));
+          }
+        } else {
+          const newClient = await addClient(userProfile.uid, {
+            name: clientDetails.name,
+            email: clientDetails.email,
+            momoNumber: clientDetails.phone,
+            momoNetwork: termsMomoNetwork || businessDetails.momoNetwork || 'MTN MOMO',
+            location: clientDetails.location
+          } as any);
+          clientId = newClient.id;
+          setSelectedClientId(clientId);
+          // Refresh local clients list
+          getClients(userProfile.uid).then(setClients);
+        }
       }
 
       await createInvoice(userProfile.uid, {
