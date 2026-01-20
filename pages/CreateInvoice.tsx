@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAlert } from '../context/AlertContext';
 import { getClients } from '../services/clientService';
+import { addClient, updateClient, getClients as fetchClients } from '../services/clientService';
 import { createInvoice } from '../services/invoiceService';
 import { Client, LineItem, InvoiceStatus } from '../types';
 import html2canvas from 'html2canvas';
@@ -193,6 +194,23 @@ const CreateInvoice: React.FC = () => {
 
     try {
       setLoading(true);
+      let clientId = selectedClientId;
+
+      // Auto-create client if not selected
+      if (!clientId && clientDetails.name) {
+        const newClient = await addClient(userProfile.uid, {
+          name: clientDetails.name,
+          email: clientDetails.email,
+          momoNumber: clientDetails.phone,
+          momoNetwork: termsMomoNetwork || businessDetails.momoNetwork || 'MTN MOMO',
+          location: clientDetails.location
+        } as any);
+        clientId = newClient.id;
+        setSelectedClientId(clientId);
+        // Refresh local clients list
+        getClients(userProfile.uid).then(setClients);
+      }
+
       await createInvoice(userProfile.uid, {
         invoiceNumber,
         date: invoiceDate,
@@ -210,7 +228,7 @@ const CreateInvoice: React.FC = () => {
         termsMomoNetwork,
         termsAccountName,
         client: {
-          id: selectedClientId || 'new',
+          id: clientId || 'new',
           name: clientDetails.name,
           email: clientDetails.email,
           momoNumber: clientDetails.phone,
@@ -227,6 +245,13 @@ const CreateInvoice: React.FC = () => {
         }
       });
 
+      // Increment client's invoice count
+      if (clientId) {
+        const existing = clients.find(c => c.id === clientId);
+        const nextCount = (existing?.invoicesCount || 0) + 1;
+        await updateClient(userProfile.uid, clientId, { invoicesCount: nextCount } as any);
+        setClients(prev => prev.map(c => c.id === clientId ? { ...c, invoicesCount: nextCount } : c));
+      }
 
 
       // Increment guest invoice count if guest user

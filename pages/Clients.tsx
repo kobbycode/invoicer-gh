@@ -3,8 +3,9 @@ import { useAuth } from '../context/AuthContext';
 import { useAlert } from '../context/AlertContext';
 import { useNotification } from '../context/NotificationContext';
 import { getClients } from '../services/clientService';
-import { Client } from '../types';
+import { Client, InvoiceStatus } from '../types';
 import { useClients } from '../hooks/useClients';
+import { useInvoices } from '../hooks/useInvoices';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -16,6 +17,7 @@ const Clients: React.FC = () => {
   const { showAlert } = useAlert();
   const { showNotification } = useNotification();
   const { clients, isLoading: loading, addClient, updateClient, deleteClient, isAdding } = useClients();
+  const { invoices } = useInvoices();
   const [showModal, setShowModal] = useState(false);
   const [newClient, setNewClient] = useState({
     name: '',
@@ -195,6 +197,30 @@ const Clients: React.FC = () => {
                     <span className="text-gray-500 font-medium">Invoices</span>
                     <span className="font-black bg-gray-50 dark:bg-gray-900 px-2 py-0.5 rounded text-[10px]">{client.invoicesCount || 0}</span>
                   </div>
+                  {(() => {
+                    const clientInvoices = invoices.filter(inv => inv.client?.id === client.id);
+                    const totalBilled = clientInvoices.reduce((acc, inv) => acc + (inv.total || 0), 0);
+                    const totalPaid = clientInvoices
+                      .filter(inv => inv.status === InvoiceStatus.PAID)
+                      .reduce((acc, inv) => acc + (inv.total || 0), 0);
+                    const outstanding = totalBilled - totalPaid;
+                    return (
+                      <>
+                        <div className="flex items-center justify-between text-xs sm:text-sm">
+                          <span className="text-gray-500 font-medium">Total Billed</span>
+                          <span className="font-bold text-right truncate ml-4">GH₵ {totalBilled.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs sm:text-sm">
+                          <span className="text-gray-500 font-medium">Total Paid</span>
+                          <span className="font-bold text-right truncate ml-4 text-green-600">GH₵ {totalPaid.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs sm:text-sm">
+                          <span className="text-gray-500 font-medium">Outstanding</span>
+                          <span className="font-bold text-right truncate ml-4 text-amber-600">GH₵ {outstanding.toLocaleString()}</span>
+                        </div>
+                      </>
+                    );
+                  })()}
                   <div className="flex items-center justify-between text-xs sm:text-sm">
                     <span className="text-gray-500 font-medium">Location</span>
                     <span className="font-bold text-right truncate ml-4">{client.location || 'N/A'}</span>
