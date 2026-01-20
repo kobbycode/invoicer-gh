@@ -131,7 +131,7 @@ const ClientsDetail: React.FC = () => {
                 clientInvoices.map((inv) => (
                   <tr key={inv.id} className="border-b border-gray-50">
                     <td className="py-3">{inv.invoiceNumber}</td>
-                    <td className="py-3">{inv.date}</td>
+                    <td className="py-3">{new Date(inv.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' })}</td>
                     <td className="py-3">
                       <span className={`px-2 py-1 rounded text-[10px] ${
                         inv.status === InvoiceStatus.PAID ? 'bg-green-50 text-green-700' :

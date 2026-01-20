@@ -26,6 +26,12 @@ const Invoices: React.FC = () => {
   const [search, setSearch] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null); // Track specific loading action
 
+  const formatDate = (value: number | string | undefined) => {
+    if (!value) return '-';
+    const d = typeof value === 'number' ? new Date(value) : new Date(value);
+    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
+  };
+
   // Fetching is handled by useInvoices now
 
   const handleDelete = async (id: string) => {
@@ -247,9 +253,9 @@ const Invoices: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-5 text-sm font-black">{inv.currency === 'GHS' ? 'GH₵' : inv.currency} {(inv.total || 0).toLocaleString()}</td>
-                      <td className="px-6 py-5 text-sm text-gray-500">{inv.dueDate}</td>
-                      <td className="px-6 py-5 text-sm text-gray-500">{inv.createdAt ? new Date(inv.createdAt).toLocaleDateString() : '-'}</td>
-                      <td className="px-6 py-5 text-sm text-gray-500">{inv.updatedAt ? new Date(inv.updatedAt).toLocaleDateString() : '-'}</td>
+                      <td className="px-6 py-5 text-sm text-gray-500">{formatDate(inv.dueDate)}</td>
+                      <td className="px-6 py-5 text-sm text-gray-500">{formatDate(inv.createdAt)}</td>
+                      <td className="px-6 py-5 text-sm text-gray-500">{formatDate(inv.updatedAt)}</td>
                       <td className="px-6 py-5">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${inv.status === InvoiceStatus.PAID ? 'bg-green-50 text-green-600' :
                           inv.status === InvoiceStatus.OVERDUE ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-500'
@@ -365,16 +371,16 @@ const Invoices: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">Due Date</p>
-                    <p className="text-xs font-bold mt-1">{inv.dueDate}</p>
+                    <p className="text-xs font-bold mt-1">{formatDate(inv.dueDate)}</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">Created</p>
-                  <p className="text-[10px] font-bold">{inv.createdAt ? new Date(inv.createdAt).toLocaleDateString() : '-'}</p>
+                  <p className="text-[10px] font-bold">{formatDate(inv.createdAt)}</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">Updated</p>
-                  <p className="text-[10px] font-bold">{inv.updatedAt ? new Date(inv.updatedAt).toLocaleDateString() : '-'}</p>
+                  <p className="text-[10px] font-bold">{formatDate(inv.updatedAt)}</p>
                 </div>
                 <div className="flex gap-2 pt-2">
                   <Button onClick={() => navigate(`/invoices/${inv.id}`)} variant="secondary" className="flex-1" leftIcon={<span className="material-symbols-outlined text-lg">visibility</span>} />

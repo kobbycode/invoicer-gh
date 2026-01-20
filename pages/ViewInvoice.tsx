@@ -21,6 +21,11 @@ const ViewInvoice: React.FC = () => {
     const [scale, setScale] = useState(1);
     const containerRef = React.useRef<HTMLDivElement>(null);
     const invoicePreviewRef = React.useRef<HTMLDivElement>(null);
+    const formatDate = (value: number | string | undefined) => {
+        if (!value) return '-';
+        const d = typeof value === 'number' ? new Date(value) : new Date(value);
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
+    };
 
     React.useEffect(() => {
         const updateScale = () => {
@@ -141,12 +146,12 @@ const ViewInvoice: React.FC = () => {
             <div className="px-3 sm:px-0 flex gap-3">
                 {invoice.createdAt && (
                     <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">
-                        Created {new Date(invoice.createdAt).toLocaleDateString()}
+                        Created {formatDate(invoice.createdAt)}
                     </span>
                 )}
                 {invoice.updatedAt && (
                     <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">
-                        Updated {new Date(invoice.updatedAt).toLocaleDateString()}
+                        Updated {formatDate(invoice.updatedAt)}
                     </span>
                 )}
             </div>
