@@ -7,6 +7,7 @@ import Invoices from './pages/Invoices';
 import CreateInvoice from './pages/CreateInvoice';
 import ViewInvoice from './pages/ViewInvoice';
 import Clients from './pages/Clients';
+import ClientsDetail from './pages/ClientDetails';
 import Payments from './pages/Payments';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
@@ -43,6 +44,7 @@ const ProtectedRoutes = () => {
         <Route path="invoices/:id" element={<ViewInvoice />} />
         <Route path="invoices/:id/edit" element={<CreateInvoice />} />
         <Route path="clients" element={<Clients />} />
+        <Route path="clients/:id" element={<ClientsDetail />} />
         <Route path="payments" element={<Payments />} />
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />

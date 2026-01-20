@@ -11,9 +11,11 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Skeleton } from '../components/ui/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const Clients: React.FC = () => {
   const { userProfile } = useAuth();
+  const navigate = useNavigate();
   const { showAlert } = useAlert();
   const { showNotification } = useNotification();
   const { clients, isLoading: loading, addClient, updateClient, deleteClient, isAdding } = useClients();
@@ -232,6 +234,9 @@ const Clients: React.FC = () => {
                     <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-0.5">MOMO</p>
                     <p className="text-[10px] sm:text-xs font-bold truncate">{client.momoNetwork} - {client.momoNumber || 'N/A'}</p>
                   </div>
+                  <button onClick={() => navigate(`/clients/${client.id}`)} className="size-10 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-colors active:scale-95">
+                    <span className="material-symbols-outlined text-lg">visibility</span>
+                  </button>
                   <button onClick={() => openEditModal(client)} className="size-10 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white hover:border-primary transition-colors active:scale-95">
                     <span className="material-symbols-outlined text-lg">edit</span>
                   </button>
