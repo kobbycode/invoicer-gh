@@ -343,191 +343,6 @@ const CreateInvoice: React.FC = () => {
         <div className={`${activeView === 'edit' ? 'block' : 'hidden lg:block'} lg:col-span-7 space-y-4 sm:space-y-6 lg:space-y-8 order-2 lg:order-1`}>
           <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
             <h3 className="text-base sm:text-lg font-black mb-4 sm:mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-lg sm:text-xl">store</span> Business Details
-            </h3>
-            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
-              <div className="flex-shrink-0 mx-auto lg:mx-0">
-                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl border-2 border-dashed border-[#dce0e4] flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:bg-gray-50 transition-colors">
-                  {businessDetails.logoUrl ? (
-                    <img src={businessDetails.logoUrl} alt="Logo" className="w-full h-full object-cover" />
-                  ) : (
-                    <>
-                      <span className="material-symbols-outlined text-2xl sm:text-3xl text-gray-400">upload_file</span>
-                      <p className="text-[8px] sm:text-[10px] font-bold mt-1 sm:mt-2 uppercase tracking-widest text-gray-500">Upload Logo</p>
-                    </>
-                  )}
-                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
-                </div>
-              </div>
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <label className="flex flex-col gap-1.5 sm:col-span-1">
-                  <span className="text-xs font-bold text-gray-600 uppercase">Business Name</span>
-                  <input
-                    value={businessDetails.name}
-                    onChange={e => setBusinessDetails({ ...businessDetails, name: e.target.value })}
-                    className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                    type="text"
-                  />
-                </label>
-                <label className="flex flex-col gap-1.5 sm:col-span-1">
-                  <span className="text-xs font-bold text-gray-600 uppercase">GHS Digital Address</span>
-                  <input
-                    value={businessDetails.address}
-                    onChange={e => setBusinessDetails({ ...businessDetails, address: e.target.value })}
-                    className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                    type="text"
-                  />
-                </label>
-                <label className="flex flex-col gap-1.5 sm:col-span-2">
-                  <span className="text-xs font-bold text-gray-600 uppercase">Email Address</span>
-                  <input
-                    value={businessDetails.email}
-                    onChange={e => setBusinessDetails({ ...businessDetails, email: e.target.value })}
-                    className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                    type="email"
-                    placeholder="e.g. hello@business.gh"
-                  />
-                </label>
-                <div className="sm:col-span-2"></div>
-              </div>
-            </div>
-          </section>
-
-          <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
-            <h3 className="text-base sm:text-lg font-black mb-4 sm:mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-lg sm:text-xl">description</span> Terms
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-xl border border-gray-100 bg-gray-50/50">
-                <span className="text-xs sm:text-sm font-bold">Enable Terms</span>
-                <input
-                  checked={termsEnabled}
-                  onChange={() => setTermsEnabled(!termsEnabled)}
-                  className="rounded-lg text-primary focus:ring-primary size-5 sm:size-6"
-                  type="checkbox"
-                />
-              </div>
-              {termsEnabled && (
-                <label className="flex flex-col gap-2">
-                  <span className="text-xs font-bold text-gray-600 uppercase">Payment Terms</span>
-                  <textarea
-                    value={termsText}
-                    onChange={(e) => setTermsText(e.target.value)}
-                    className="rounded-xl border-[#dce0e4] bg-white h-28 sm:h-32 text-sm focus:ring-primary focus:border-primary px-3 py-2"
-                    placeholder="Example: Send MoMo to 024 XXX XXXX, Account Name: Your Business. Include Invoice # in reference."
-                  />
-                </label>
-              )}
-              {termsEnabled && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-gray-600 uppercase">MoMo Network</span>
-                    <select
-                      value={termsMomoNetwork}
-                      onChange={e => setTermsMomoNetwork(e.target.value)}
-                      className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary font-bold"
-                    >
-                      <option>MTN MOMO</option>
-                      <option>Telecel Cash</option>
-                      <option>Airtel Tigo Money</option>
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-gray-600 uppercase">MoMo Number</span>
-                    <input
-                      value={termsMomoNumber}
-                      onChange={e => setTermsMomoNumber(e.target.value)}
-                      className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary font-bold"
-                      type="text"
-                      placeholder="024 XXX XXXX"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5 sm:col-span-2">
-                    <span className="text-xs font-bold text-gray-600 uppercase">Account Name</span>
-                    <input
-                      value={termsAccountName}
-                      onChange={e => setTermsAccountName(e.target.value)}
-                      className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                      type="text"
-                      placeholder="Your Business"
-                    />
-                  </label>
-                </div>
-              )}
-            </div>
- 
-           </section>
- 
-          <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <h3 className="text-base sm:text-lg font-black flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-lg sm:text-xl">person_add</span> Client Details
-              </h3>
-              <select
-                className="w-full sm:w-auto rounded-lg border-gray-200 text-xs sm:text-sm py-2 sm:py-1.5 px-3"
-                value={selectedClientId}
-                onChange={handleClientSelect}
-              >
-                <option value="">Select Existing Client...</option>
-                {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <label className="flex flex-col gap-1.5 sm:col-span-2">
-                <span className="text-xs font-bold text-gray-600 uppercase">Client Name / Company</span>
-                <input
-                  value={clientDetails.name}
-                  onChange={e => setClientDetails({ ...clientDetails, name: e.target.value })}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                  placeholder="John Doe or ABC Ghana Corp"
-                  type="text"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold text-gray-600 uppercase">Email Address</span>
-                <input
-                  value={clientDetails.email}
-                  onChange={e => setClientDetails({ ...clientDetails, email: e.target.value })}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                  placeholder="client@example.com"
-                  type="email"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold text-gray-600 uppercase">Phone Number</span>
-                <input
-                  value={clientDetails.phone}
-                  onChange={e => setClientDetails({ ...clientDetails, phone: e.target.value })}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                  placeholder="+233 ..."
-                  type="tel"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5 sm:col-span-2">
-                <span className="text-xs font-bold text-gray-600 uppercase">Location / Address</span>
-                <input
-                  value={clientDetails.location}
-                  onChange={e => setClientDetails({ ...clientDetails, location: e.target.value })}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
-                  placeholder="City, Region"
-                  type="text"
-                />
-              </label>
-              <label className="flex flex-col gap-1.5 sm:col-span-2">
-                <span className="text-xs font-bold text-gray-600 uppercase">Due Date</span>
-                <input
-                  value={dueDate}
-                  onChange={e => setDueDate(e.target.value)}
-                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary px-3"
-                  type="date"
-                />
-              </label>
-            </div>
-          </section>
-
-          <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
-            <h3 className="text-base sm:text-lg font-black mb-4 sm:mb-6 flex items-center gap-2">
               <span className="material-symbols-outlined text-primary text-lg sm:text-xl">list_alt</span> Items & Services
             </h3>
             <div className="space-y-4 sm:space-y-4">
@@ -618,6 +433,205 @@ const CreateInvoice: React.FC = () => {
               >
                 <span className="material-symbols-outlined text-lg">add_circle</span> Add Tax
               </button>
+            </div>
+          </section>
+          <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-lg font-black flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-lg sm:text-xl">person_add</span> Client Details
+              </h3>
+              <select
+                className="w-full sm:w-auto rounded-lg border-gray-200 text-xs sm:text-sm py-2 sm:py-1.5 px-3"
+                value={selectedClientId}
+                onChange={handleClientSelect}
+              >
+                <option value="">Select Existing Client...</option>
+                {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-xs font-bold text-gray-600 uppercase">Client Name / Company</span>
+                <input
+                  value={clientDetails.name}
+                  onChange={e => setClientDetails({ ...clientDetails, name: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="John Doe or ABC Ghana Corp"
+                  type="text"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-bold text-gray-600 uppercase">Email Address</span>
+                <input
+                  value={clientDetails.email}
+                  onChange={e => setClientDetails({ ...clientDetails, email: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="client@example.com"
+                  type="email"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-bold text-gray-600 uppercase">Phone Number</span>
+                <input
+                  value={clientDetails.phone}
+                  onChange={e => setClientDetails({ ...clientDetails, phone: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="+233 ..."
+                  type="tel"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-xs font-bold text-gray-600 uppercase">Location / Address</span>
+                <input
+                  value={clientDetails.location}
+                  onChange={e => setClientDetails({ ...clientDetails, location: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="City, Region"
+                  type="text"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-xs font-bold text-gray-600 uppercase">Due Date</span>
+                <input
+                  value={dueDate}
+                  onChange={e => setDueDate(e.target.value)}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary px-3"
+                  type="date"
+                />
+              </label>
+            </div>
+          </section>
+
+          <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-lg font-black flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-lg sm:text-xl">person_add</span> Client Details
+              </h3>
+              <select
+                className="w-full sm:w-auto rounded-lg border-gray-200 text-xs sm:text-sm py-2 sm:py-1.5 px-3"
+                value={selectedClientId}
+                onChange={handleClientSelect}
+              >
+                <option value="">Select Existing Client...</option>
+                {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-xs font-bold text-gray-600 uppercase">Client Name / Company</span>
+                <input
+                  value={clientDetails.name}
+                  onChange={e => setClientDetails({ ...clientDetails, name: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="John Doe or ABC Ghana Corp"
+                  type="text"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-bold text-gray-600 uppercase">Email Address</span>
+                <input
+                  value={clientDetails.email}
+                  onChange={e => setClientDetails({ ...clientDetails, email: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="client@example.com"
+                  type="email"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-xs font-bold text-gray-600 uppercase">Phone Number</span>
+                <input
+                  value={clientDetails.phone}
+                  onChange={e => setClientDetails({ ...clientDetails, phone: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="+233 ..."
+                  type="tel"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-xs font-bold text-gray-600 uppercase">Location / Address</span>
+                <input
+                  value={clientDetails.location}
+                  onChange={e => setClientDetails({ ...clientDetails, location: e.target.value })}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                  placeholder="City, Region"
+                  type="text"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-xs font-bold text-gray-600 uppercase">Due Date</span>
+                <input
+                  value={dueDate}
+                  onChange={e => setDueDate(e.target.value)}
+                  className="rounded-xl border-[#dce0e4] bg-gray-50 h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary px-3"
+                  type="date"
+                />
+              </label>
+            </div>
+          </section>
+
+          <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
+            <h3 className="text-base sm:text-lg font-black mb-4 sm:mb-6 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-lg sm:text-xl">description</span> Terms
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-xl border border-gray-100 bg-gray-50/50">
+                <span className="text-xs sm:text-sm font-bold">Enable Terms</span>
+                <input
+                  checked={termsEnabled}
+                  onChange={() => setTermsEnabled(!termsEnabled)}
+                  className="rounded-lg text-primary focus:ring-primary size-5 sm:size-6"
+                  type="checkbox"
+                />
+              </div>
+              {termsEnabled && (
+                <label className="flex flex-col gap-2">
+                  <span className="text-xs font-bold text-gray-600 uppercase">Payment Terms</span>
+                  <textarea
+                    value={termsText}
+                    onChange={(e) => setTermsText(e.target.value)}
+                    className="rounded-xl border-[#dce0e4] bg-white h-28 sm:h-32 text-sm focus:ring-primary focus:border-primary px-3 py-2"
+                    placeholder="Example: Send MoMo to 024 XXX XXXX, Account Name: Your Business. Include Invoice # in reference."
+                  />
+                </label>
+              )}
+              {termsEnabled && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-xs font-bold text-gray-600 uppercase">MoMo Network</span>
+                    <select
+                      value={termsMomoNetwork}
+                      onChange={e => setTermsMomoNetwork(e.target.value)}
+                      className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary font-bold"
+                    >
+                      <option>MTN MOMO</option>
+                      <option>Telecel Cash</option>
+                      <option>Airtel Tigo Money</option>
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-xs font-bold text-gray-600 uppercase">MoMo Number</span>
+                    <input
+                      value={termsMomoNumber}
+                      onChange={e => setTermsMomoNumber(e.target.value)}
+                      className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary font-bold"
+                      type="text"
+                      placeholder="024 XXX XXXX"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1.5 sm:col-span-2">
+                    <span className="text-xs font-bold text-gray-600 uppercase">Account Name</span>
+                    <input
+                      value={termsAccountName}
+                      onChange={e => setTermsAccountName(e.target.value)}
+                      className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                      type="text"
+                      placeholder="Your Business"
+                    />
+                  </label>
+                </div>
+              )}
             </div>
           </section>
         </div>
