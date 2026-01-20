@@ -13,16 +13,7 @@ const Settings: React.FC = () => {
     name: '',
     email: '',
     address: '',
-    momoNetwork: 'MTN MOMO',
-    momoNumber: '',
-    tin: '',
     logoUrl: '',
-    preferences: {
-      defaultCurrency: 'GHS',
-      defaultTaxRate: 15,
-      invoicePrefix: 'INV-',
-      autoSave: true
-    }
   });
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('business');
@@ -33,16 +24,7 @@ const Settings: React.FC = () => {
         name: userProfile.name || '',
         email: userProfile.email || '',
         address: userProfile.address || '',
-        momoNetwork: userProfile.momoNetwork || 'MTN MOMO',
-        momoNumber: userProfile.momoNumber || '',
-        tin: userProfile.tin || '',
         logoUrl: userProfile.logoUrl || '',
-        preferences: userProfile.preferences || {
-          defaultCurrency: 'GHS',
-          defaultTaxRate: 15,
-          invoicePrefix: 'INV-',
-          autoSave: true
-        }
       });
     }
   }, [userProfile]);
@@ -100,10 +82,7 @@ const Settings: React.FC = () => {
             <nav className="flex lg:flex-col gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar lg:overflow-x-visible -mx-1 sm:mx-0 px-1 sm:px-0">
               <div className="flex lg:flex-col gap-1.5 sm:gap-2 lg:min-w-0 lg:w-full">
             {[
-              { id: 'business', icon: 'store', label: 'Business' },
-              { id: 'payments', icon: 'payments', label: 'Payments' },
-              { id: 'tax', icon: 'description', label: 'Tax' },
-              { id: 'preferences', icon: 'settings', label: 'Prefs' }
+              { id: 'business', icon: 'store', label: 'Business' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -129,17 +108,8 @@ const Settings: React.FC = () => {
 
         <div className="flex-1 space-y-3 sm:space-y-4 lg:space-y-8 min-w-0">
         <div>
-          <h2 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-black tracking-tight break-words">{
-            activeTab === 'business' ? 'Business Settings' :
-              activeTab === 'payments' ? 'Payment Methods' :
-                activeTab === 'tax' ? 'Tax & Compliance' : 'App Preferences'
-          }</h2>
-          <p className="text-gray-500 text-xs sm:text-sm mt-1 sm:mt-2 break-words">
-            {activeTab === 'business' && "Manage your Ghanaian business profile and local identity."}
-            {activeTab === 'payments' && "Setup your MoMo networks for direct invoice payments."}
-            {activeTab === 'tax' && "Configure GRA compliance and tax identification."}
-            {activeTab === 'preferences' && "Customize how the app behaves and calculates totals."}
-          </p>
+          <h2 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-black tracking-tight break-words">Business Settings</h2>
+          <p className="text-gray-500 text-xs sm:text-sm mt-1 sm:mt-2 break-words">Manage your Ghanaian business profile and local identity.</p>
         </div>
 
         {activeTab === 'business' && (
@@ -208,156 +178,7 @@ const Settings: React.FC = () => {
           </section>
         )}
 
-        {activeTab === 'payments' && (
-          <section className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
-            <div className="p-4 sm:p-6 bg-gray-50/50 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-green-600 text-lg sm:text-xl">account_balance_wallet</span>
-                <h3 className="font-black text-sm sm:text-base">Mobile Money (MoMo)</h3>
-              </div>
-              <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-green-50 border border-green-100 rounded-full">
-                <div className="size-1.5 sm:size-2 rounded-full bg-green-600 animate-pulse"></div>
-                <span className="text-[8px] sm:text-[9px] font-black text-green-600 uppercase tracking-widest">Verified</span>
-              </div>
-            </div>
-            <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
-              <div className="flex flex-col gap-6 sm:gap-8">
-                <div className="flex-1 space-y-4 sm:space-y-6">
-                  <div className="space-y-1.5">
-                    <label className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest">Network Provider</label>
-                    <select
-                      name="momoNetwork"
-                      value={formData.momoNetwork}
-                      onChange={handleChange}
-                      className="w-full px-3 sm:px-4 h-10 sm:h-12 rounded-xl border-gray-100 bg-gray-50 dark:bg-gray-900 text-xs sm:text-sm font-bold"
-                    >
-                      <option>MTN MOMO</option>
-                      <option>Telecel Cash</option>
-                      <option>Airtel Tigo Money</option>
-                    </select>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest">MoMo Number</label>
-                    <div className="relative">
-                      <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400 font-black text-xs sm:text-sm">+233</span>
-                      <input
-                        name="momoNumber"
-                        value={formData.momoNumber}
-                        onChange={handleChange}
-                        className="w-full pl-12 sm:pl-16 pr-3 sm:pr-4 h-10 sm:h-12 rounded-xl border-gray-100 bg-gray-50 dark:bg-gray-900 text-xs sm:text-sm font-bold"
-                        type="text"
-                        placeholder="24 123 4567"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center text-center">
-                  <div className="size-16 sm:size-20 bg-white dark:bg-gray-800 p-2 rounded-xl sm:rounded-2xl shadow-sm mb-3 sm:mb-4">
-                    <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg sm:rounded-xl flex items-center justify-center text-white font-black text-base sm:text-lg">QR</div>
-                  </div>
-                  <p className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Direct MoMo Link Activated</p>
-                  <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold max-w-[200px] sm:max-w-none">Clients can pay directly to your number from the invoice.</p>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {activeTab === 'tax' && (
-          <section className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
-            <div className="p-4 sm:p-6 bg-gray-50/50 border-b border-gray-100 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-lg sm:text-xl">gavel</span>
-              <h3 className="font-black text-sm sm:text-base">Tax & Compliance</h3>
-            </div>
-            <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
-              <div className="space-y-1.5">
-                <label className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest">Tax Identification Number (TIN)</label>
-                <input
-                  name="tin"
-                  value={formData.tin}
-                  onChange={handleChange}
-                  className="w-full px-3 sm:px-4 h-10 sm:h-12 rounded-xl border-gray-100 bg-gray-50 text-xs sm:text-sm focus:ring-primary focus:border-primary font-mono font-bold uppercase"
-                  type="text"
-                  placeholder="P0012345678"
-                />
-                <p className="text-[8px] sm:text-[9px] text-gray-400 italic font-bold">This will appear on all your invoices.</p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {activeTab === 'preferences' && (
-          <section className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
-            <div className="p-4 sm:p-6 bg-gray-50/50 border-b border-gray-100 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-lg sm:text-xl">settings_applications</span>
-              <h3 className="font-black text-sm sm:text-base">App Preferences</h3>
-            </div>
-            <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-                <div className="space-y-1.5 sm:col-span-1">
-                  <label className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest">Default Currency</label>
-                  <select
-                    value={formData.preferences.defaultCurrency}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      preferences: { ...formData.preferences, defaultCurrency: e.target.value }
-                    })}
-                    className="w-full px-3 sm:px-4 h-10 sm:h-12 rounded-xl border-gray-100 bg-gray-50 text-xs sm:text-sm font-bold"
-                  >
-                    <option value="GHS">GHS (₵) - Ghana Cedi</option>
-                    <option value="USD">USD ($) - US Dollar</option>
-                    <option value="EUR">EUR (€) - Euro</option>
-                    <option value="GBP">GBP (£) - British Pound</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1.5 sm:col-span-1">
-                  <label className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest">Default VAT Rate (%)</label>
-                  <input
-                    type="number"
-                    value={formData.preferences.defaultTaxRate}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      preferences: { ...formData.preferences, defaultTaxRate: Number(e.target.value) }
-                    })}
-                    className="w-full px-3 sm:px-4 h-10 sm:h-12 rounded-xl border-gray-100 bg-gray-50 text-xs sm:text-sm font-bold"
-                    placeholder="15"
-                  />
-                </div>
-
-                <div className="space-y-1.5 sm:col-span-1">
-                  <label className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest">Invoice Number Prefix</label>
-                  <input
-                    type="text"
-                    value={formData.preferences.invoicePrefix}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      preferences: { ...formData.preferences, invoicePrefix: e.target.value }
-                    })}
-                    className="w-full px-3 sm:px-4 h-10 sm:h-12 rounded-xl border-gray-100 bg-gray-50 text-xs sm:text-sm font-bold"
-                    placeholder="INV-"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 sm:col-span-1 sm:mt-0 mt-2">
-                  <div>
-                    <p className="text-xs sm:text-sm font-black">Auto-save Drafts</p>
-                    <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest">Save invoices as you type</p>
-                  </div>
-                  <button
-                    onClick={() => setFormData({
-                      ...formData,
-                      preferences: { ...formData.preferences, autoSave: !formData.preferences.autoSave }
-                    })}
-                    className={`size-10 sm:size-12 rounded-xl flex items-center justify-center transition-all ${formData.preferences.autoSave ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-gray-200 text-gray-400'}`}
-                  >
-                    <span className="material-symbols-outlined text-lg sm:text-xl">{formData.preferences.autoSave ? 'toggle_on' : 'toggle_off'}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
+        
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 lg:gap-4 pb-12">
           <button className="w-full sm:w-auto px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 text-[8px] sm:text-[9px] lg:text-[10px] xl:text-sm font-black text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors rounded-xl">Discard Changes</button>
