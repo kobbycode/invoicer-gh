@@ -12,6 +12,8 @@ export interface LineItem {
   description: string;
   quantity: number;
   price: number;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 export interface Client {

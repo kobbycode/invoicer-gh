@@ -69,6 +69,14 @@ const ClientsDetail: React.FC = () => {
               <span className="text-gray-500">Invoices</span>
               <span>{client.invoicesCount || clientInvoices.length}</span>
             </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Created</span>
+              <span>{client.createdAt ? new Date(client.createdAt).toLocaleDateString() : 'N/A'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Updated</span>
+              <span>{client.updatedAt ? new Date(client.updatedAt).toLocaleDateString() : 'N/A'}</span>
+            </div>
           </div>
         </Card>
 
@@ -144,4 +152,3 @@ const ClientsDetail: React.FC = () => {
 };
 
 export default ClientsDetail;
-

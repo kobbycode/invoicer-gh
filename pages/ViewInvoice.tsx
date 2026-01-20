@@ -138,6 +138,18 @@ const ViewInvoice: React.FC = () => {
             <div className="px-3 sm:px-0">
                 <h3 className="text-gray-400 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] mb-2 sm:mb-4">Document View</h3>
             </div>
+            <div className="px-3 sm:px-0 flex gap-3">
+                {invoice.createdAt && (
+                    <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">
+                        Created {new Date(invoice.createdAt).toLocaleDateString()}
+                    </span>
+                )}
+                {invoice.updatedAt && (
+                    <span className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">
+                        Updated {new Date(invoice.updatedAt).toLocaleDateString()}
+                    </span>
+                )}
+            </div>
 
             {/* Premium Document Stage */}
             <div

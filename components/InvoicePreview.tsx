@@ -18,12 +18,7 @@ interface ClientDetails {
     location: string;
 }
 
-interface LineItem {
-    id: string;
-    description: string;
-    quantity: number;
-    price: number;
-}
+import { LineItem } from '../types';
 
 interface InvoicePreviewProps {
     businessDetails: BusinessDetails;
@@ -152,7 +147,17 @@ export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(({
                             <tbody className="font-bold">
                                 {items.map((item) => (
                                     <tr key={item.id} className="border-b border-gray-50">
-                                        <td className="py-5 text-sm">{item.description || 'Item Description'}</td>
+                                        <td className="py-5 text-sm">
+                                            <div className="flex flex-col">
+                                                <span>{item.description || 'Item Description'}</span>
+                                                {(item.createdAt || item.updatedAt) && (
+                                                    <span className="text-[10px] text-gray-400 font-bold mt-1">
+                                                        {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ''}
+                                                        {item.updatedAt ? ` • updated ${new Date(item.updatedAt).toLocaleDateString()}` : ''}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="py-5 text-center">{item.quantity}</td>
                                         <td className="py-5 text-right">{priceSymbol} {item.price.toLocaleString()}</td>
                                         <td className="py-5 text-right">{priceSymbol} {(item.quantity * item.price).toLocaleString()}</td>

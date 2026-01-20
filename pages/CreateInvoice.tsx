@@ -62,7 +62,7 @@ const CreateInvoice: React.FC = () => {
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
   const [dueDate, setDueDate] = useState('');
   const [items, setItems] = useState<LineItem[]>([
-    { id: '1', description: '', quantity: 1, price: 0 }
+    { id: '1', description: '', quantity: 1, price: 0, createdAt: Date.now() }
   ]);
 
   const [customTaxRate, setCustomTaxRate] = useState<number>(0);
@@ -155,11 +155,11 @@ const CreateInvoice: React.FC = () => {
   };
 
   const addItem = () => {
-    setItems([...items, { id: Math.random().toString(), description: '', quantity: 1, price: 0 }]);
+    setItems([...items, { id: Math.random().toString(), description: '', quantity: 1, price: 0, createdAt: Date.now() }]);
   };
 
   const updateItem = (id: string, field: keyof LineItem, value: any) => {
-    setItems(items.map(item => item.id === id ? { ...item, [field]: value } : item));
+    setItems(items.map(item => item.id === id ? { ...item, [field]: value, updatedAt: Date.now() } : item));
   };
 
   const subtotal = useMemo(() => items.reduce((acc, item) => acc + (item.quantity * item.price), 0), [items]);

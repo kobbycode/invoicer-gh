@@ -71,6 +71,8 @@ const Invoices: React.FC = () => {
       InvoiceNumber: inv.invoiceNumber,
       Date: inv.date,
       DueDate: inv.dueDate,
+      CreatedDate: inv.createdAt ? new Date(inv.createdAt).toISOString() : '',
+      UpdatedDate: inv.updatedAt ? new Date(inv.updatedAt).toISOString() : '',
       ClientName: inv.client.name,
       ClientEmail: inv.client.email,
       Total: inv.total,
@@ -183,6 +185,8 @@ const Invoices: React.FC = () => {
                   <th className="px-6 py-4">Client</th>
                   <th className="px-6 py-4">Amount</th>
                   <th className="px-6 py-4">Due Date</th>
+                  <th className="px-6 py-4">Created</th>
+                  <th className="px-6 py-4">Updated</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
@@ -198,6 +202,7 @@ const Invoices: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-5"><Skeleton className="h-4 w-24 rounded" /></td>
+                    <td className="px-6 py-5"><Skeleton className="h-4 w-20 rounded" /></td>
                     <td className="px-6 py-5"><Skeleton className="h-4 w-20 rounded" /></td>
                     <td className="px-6 py-5"><Skeleton className="h-6 w-20 rounded-full" /></td>
                     <td className="px-6 py-5 text-right"><Skeleton className="h-8 w-8 rounded ml-auto" /></td>
@@ -215,6 +220,8 @@ const Invoices: React.FC = () => {
                   <th className="px-6 py-4">Client</th>
                   <th className="px-6 py-4">Amount</th>
                   <th className="px-6 py-4">Due Date</th>
+                  <th className="px-6 py-4">Created</th>
+                  <th className="px-6 py-4">Updated</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
@@ -241,6 +248,8 @@ const Invoices: React.FC = () => {
                       </td>
                       <td className="px-6 py-5 text-sm font-black">{inv.currency === 'GHS' ? 'GH₵' : inv.currency} {(inv.total || 0).toLocaleString()}</td>
                       <td className="px-6 py-5 text-sm text-gray-500">{inv.dueDate}</td>
+                      <td className="px-6 py-5 text-sm text-gray-500">{inv.createdAt ? new Date(inv.createdAt).toLocaleDateString() : '-'}</td>
+                      <td className="px-6 py-5 text-sm text-gray-500">{inv.updatedAt ? new Date(inv.updatedAt).toLocaleDateString() : '-'}</td>
                       <td className="px-6 py-5">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${inv.status === InvoiceStatus.PAID ? 'bg-green-50 text-green-600' :
                           inv.status === InvoiceStatus.OVERDUE ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-500'
@@ -358,6 +367,14 @@ const Invoices: React.FC = () => {
                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">Due Date</p>
                     <p className="text-xs font-bold mt-1">{inv.dueDate}</p>
                   </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">Created</p>
+                  <p className="text-[10px] font-bold">{inv.createdAt ? new Date(inv.createdAt).toLocaleDateString() : '-'}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">Updated</p>
+                  <p className="text-[10px] font-bold">{inv.updatedAt ? new Date(inv.updatedAt).toLocaleDateString() : '-'}</p>
                 </div>
                 <div className="flex gap-2 pt-2">
                   <Button onClick={() => navigate(`/invoices/${inv.id}`)} variant="secondary" className="flex-1" leftIcon={<span className="material-symbols-outlined text-lg">visibility</span>} />
