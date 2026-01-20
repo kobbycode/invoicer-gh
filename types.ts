@@ -41,6 +41,11 @@ export interface Invoice {
   covidLevyEnabled: boolean;
   total: number;
   businessInfo?: BusinessProfile;
+  termsEnabled?: boolean;
+  termsText?: string;
+  termsMomoNumber?: string;
+  termsMomoNetwork?: string;
+  termsAccountName?: string;
   createdAt?: number;
   updatedAt?: number;
 }
@@ -50,8 +55,8 @@ export interface BusinessProfile {
   email: string;
   address: string;
   logoUrl?: string;
-  momoNumber: string;
-  momoNetwork: string;
+  momoNumber?: string;
+  momoNetwork?: string;
   tin: string;
 }
 

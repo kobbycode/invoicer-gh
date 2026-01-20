@@ -69,6 +69,11 @@ const CreateInvoice: React.FC = () => {
   const [showTaxModal, setShowTaxModal] = useState(false);
   const [qtyInputs, setQtyInputs] = useState<Record<string, string>>({});
   const [priceInputs, setPriceInputs] = useState<Record<string, string>>({});
+  const [termsEnabled, setTermsEnabled] = useState(false);
+  const [termsText, setTermsText] = useState('');
+  const [termsMomoNumber, setTermsMomoNumber] = useState('');
+  const [termsMomoNetwork, setTermsMomoNetwork] = useState('MTN MOMO');
+  const [termsAccountName, setTermsAccountName] = useState('');
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClientId, setSelectedClientId] = useState('');
 
@@ -199,6 +204,11 @@ const CreateInvoice: React.FC = () => {
         leviesEnabled: false,
         covidLevyEnabled: false,
         total,
+        termsEnabled,
+        termsText,
+        termsMomoNumber,
+        termsMomoNetwork,
+        termsAccountName,
         client: {
           id: selectedClientId || 'new',
           name: clientDetails.name,
@@ -213,11 +223,11 @@ const CreateInvoice: React.FC = () => {
           name: businessDetails.name,
           address: businessDetails.address,
           email: businessDetails.email,
-          momoNumber: businessDetails.momoNumber,
-          momoNetwork: businessDetails.momoNetwork,
           tin: businessDetails.tin || ''
         }
       });
+
+
 
       // Increment guest invoice count if guest user
       if (isGuest) {
@@ -378,12 +388,43 @@ const CreateInvoice: React.FC = () => {
                     placeholder="e.g. hello@business.gh"
                   />
                 </label>
-                <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="sm:col-span-2"></div>
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
+            <h3 className="text-base sm:text-lg font-black mb-4 sm:mb-6 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-lg sm:text-xl">description</span> Terms
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-xl border border-gray-100 bg-gray-50/50">
+                <span className="text-xs sm:text-sm font-bold">Enable Terms</span>
+                <input
+                  checked={termsEnabled}
+                  onChange={() => setTermsEnabled(!termsEnabled)}
+                  className="rounded-lg text-primary focus:ring-primary size-5 sm:size-6"
+                  type="checkbox"
+                />
+              </div>
+              {termsEnabled && (
+                <label className="flex flex-col gap-2">
+                  <span className="text-xs font-bold text-gray-600 uppercase">Payment Terms</span>
+                  <textarea
+                    value={termsText}
+                    onChange={(e) => setTermsText(e.target.value)}
+                    className="rounded-xl border-[#dce0e4] bg-white h-28 sm:h-32 text-sm focus:ring-primary focus:border-primary px-3 py-2"
+                    placeholder="Example: Send MoMo to 024 XXX XXXX, Account Name: Your Business. Include Invoice # in reference."
+                  />
+                </label>
+              )}
+              {termsEnabled && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <label className="flex flex-col gap-1.5">
                     <span className="text-xs font-bold text-gray-600 uppercase">MoMo Network</span>
                     <select
-                      value={businessDetails.momoNetwork}
-                      onChange={e => setBusinessDetails({ ...businessDetails, momoNetwork: e.target.value })}
+                      value={termsMomoNetwork}
+                      onChange={e => setTermsMomoNetwork(e.target.value)}
                       className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary font-bold"
                     >
                       <option>MTN MOMO</option>
@@ -394,17 +435,26 @@ const CreateInvoice: React.FC = () => {
                   <label className="flex flex-col gap-1.5">
                     <span className="text-xs font-bold text-gray-600 uppercase">MoMo Number</span>
                     <input
-                      value={businessDetails.momoNumber}
-                      onChange={e => setBusinessDetails({ ...businessDetails, momoNumber: e.target.value })}
+                      value={termsMomoNumber}
+                      onChange={e => setTermsMomoNumber(e.target.value)}
                       className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary font-bold"
                       type="text"
                       placeholder="024 XXX XXXX"
                     />
                   </label>
+                  <label className="flex flex-col gap-1.5 sm:col-span-2">
+                    <span className="text-xs font-bold text-gray-600 uppercase">Account Name</span>
+                    <input
+                      value={termsAccountName}
+                      onChange={e => setTermsAccountName(e.target.value)}
+                      className="rounded-xl border-[#dce0e4] bg-white h-10 sm:h-11 text-sm focus:ring-primary focus:border-primary"
+                      type="text"
+                      placeholder="Your Business"
+                    />
+                  </label>
                 </div>
-              </div>
+              )}
             </div>
-          </section>
 
           <section className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-[#f1f2f4] dark:border-gray-800">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -668,23 +718,37 @@ const CreateInvoice: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 p-4 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="size-10 sm:size-12 bg-white rounded-lg sm:rounded-xl flex items-center justify-center shadow-sm overflow-hidden border border-gray-100 flex-shrink-0">
-                        {getNetworkLogo(businessDetails.momoNetwork) ? (
-                          <img src={getNetworkLogo(businessDetails.momoNetwork)!} alt={businessDetails.momoNetwork} className="w-full h-full object-contain" />
-                        ) : (
-                          <div className="size-full bg-momo-yellow flex items-center justify-center">
-                            <span className="text-[8px] font-black text-black tracking-tighter">MOMO</span>
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-[9px] sm:text-[10px] font-black text-gray-400 tracking-widest uppercase mb-1">Pay via {businessDetails.momoNetwork || 'MoMo'}</p>
-                        <p className="text-xs sm:text-sm font-black break-all sm:break-normal">{businessDetails.momoNumber || '---'}</p>
+                  {termsEnabled && termsMomoNumber.trim() && (
+                    <div className="bg-gray-50 p-4 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="size-10 sm:size-12 bg-white rounded-lg sm:rounded-xl flex items-center justify-center shadow-sm overflow-hidden border border-gray-100 flex-shrink-0">
+                          {getNetworkLogo(termsMomoNetwork) ? (
+                            <img src={getNetworkLogo(termsMomoNetwork)!} alt={termsMomoNetwork} className="w-full h-full object-contain" />
+                          ) : (
+                            <div className="size-full bg-momo-yellow flex items-center justify-center">
+                              <span className="text-[8px] font-black text-black tracking-tighter">MOMO</span>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-[9px] sm:text-[10px] font-black text-gray-400 tracking-widest uppercase mb-1">Pay via {termsMomoNetwork || 'MoMo'}</p>
+                          <p className="text-xs sm:text-sm font-black break-all sm:break-normal">{termsMomoNumber}</p>
+                          {termsAccountName && (
+                            <p className="text-[10px] sm:text-xs text-gray-500 font-bold">Account: {termsAccountName}</p>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
+
+                  {termsEnabled && termsText.trim() && (
+                    <div className="mt-6 sm:mt-8 lg:mt-10 pt-6 sm:pt-7 lg:pt-8 border-t border-gray-100">
+                      <h4 className="text-sm sm:text-base font-black mb-2">Terms</h4>
+                      <p className="text-xs sm:text-sm text-gray-600 font-bold whitespace-pre-line">
+                        {termsText}
+                      </p>
+                    </div>
+                  )}
 
                   <div className="mt-6 sm:mt-8 lg:mt-10 pt-6 sm:pt-7 lg:pt-8 border-t border-gray-100 text-center">
                     <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 tracking-widest uppercase">Powered by KVoice • Thank you for your business!</p>
