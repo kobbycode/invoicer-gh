@@ -41,7 +41,7 @@ const CreateInvoice: React.FC = () => {
 
 
   const [businessDetails, setBusinessDetails] = useState({
-    name: userProfile?.businessName || '',
+    name: userProfile?.name || '',
     address: userProfile?.address || '',
     email: userProfile?.email || '',
     momoNumber: userProfile?.momoNumber || '',
@@ -80,7 +80,7 @@ const CreateInvoice: React.FC = () => {
   useEffect(() => {
     if (userProfile) {
       setBusinessDetails({
-        name: userProfile.businessName || '',
+        name: userProfile.name || '',
         address: userProfile.address || '',
         email: userProfile.email || '',
         momoNumber: userProfile.momoNumber || '',
